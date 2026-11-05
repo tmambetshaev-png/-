@@ -1,0 +1,950 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b0b0d">
+  <title>Личный дашборд — Бишкек</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #10110f;
+      --panel: #181a17;
+      --panel-soft: #1d201c;
+      --line: #2a2d28;
+      --text: #f0f1eb;
+      --muted: #898e83;
+      --accent: #c4f06b;
+      --accent-dim: #27331c;
+      --orange: #e6a56c;
+      --radius: 20px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      min-width: 320px;
+      min-height: 100vh;
+      margin: 0;
+      background:
+        radial-gradient(ellipse at 18% 0%, rgba(116, 144, 74, .11), transparent 35%),
+        var(--bg);
+      color: var(--text);
+      font-family: "DM Sans", sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    button, input { font: inherit; }
+    button { color: inherit; }
+    .shell { max-width: 1440px; margin: 0 auto; padding: 34px 46px 48px; }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 42px;
+    }
+    .brand { display: flex; align-items: center; gap: 12px; }
+    .brand-mark {
+      display: grid;
+      width: 38px;
+      height: 38px;
+      place-items: center;
+      border: 1px solid #39422d;
+      border-radius: 12px;
+      background: var(--accent-dim);
+      color: var(--accent);
+    }
+    .brand-mark svg { width: 20px; height: 20px; }
+    .brand-name { font-family: Manrope, sans-serif; font-size: 15px; font-weight: 800; letter-spacing: -.3px; }
+    .brand-subtitle { margin-top: 2px; color: var(--muted); font-size: 11px; }
+    .topbar-right { display: flex; align-items: center; gap: 10px; }
+    .live-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 12px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: #b6b9b0;
+      font-size: 11px;
+    }
+    .live-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 10px #c4f06b80; }
+    .avatar {
+      display: grid;
+      width: 36px;
+      height: 36px;
+      place-items: center;
+      border: 1px solid #3b3d37;
+      border-radius: 50%;
+      background: #292b26;
+      color: #dadbd3;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .welcome { margin-bottom: 24px; }
+    .eyebrow { color: var(--accent); font-size: 11px; font-weight: 700; letter-spacing: 1.6px; text-transform: uppercase; }
+    h1, h2, p { margin-top: 0; }
+    h1 { margin: 9px 0 0; font-family: Manrope, sans-serif; font-size: clamp(24px, 3vw, 34px); font-weight: 600; letter-spacing: -1.2px; }
+    h1 span { color: #858a7f; font-weight: 400; }
+    .dashboard-grid { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(310px, 1fr); gap: 18px; }
+    .left-column, .right-column { display: grid; align-content: start; gap: 18px; min-width: 0; }
+    .panel { overflow: hidden; border: 1px solid var(--line); border-radius: var(--radius); background: rgba(24, 26, 23, .94); }
+    .panel-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .panel-title { margin: 0; font-family: Manrope, sans-serif; font-size: 15px; font-weight: 700; letter-spacing: -.3px; }
+    .panel-kicker { margin-top: 4px; color: var(--muted); font-size: 11px; }
+    .icon-box {
+      display: grid;
+      width: 34px;
+      height: 34px;
+      flex: 0 0 auto;
+      place-items: center;
+      border: 1px solid #30332d;
+      border-radius: 11px;
+      background: #20231e;
+      color: var(--accent);
+    }
+    .icon-box svg { width: 17px; height: 17px; }
+
+    .hero-row { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(250px, .95fr); gap: 18px; }
+    .clock-card {
+      position: relative;
+      min-height: 220px;
+      padding: 25px 28px;
+      background:
+        radial-gradient(ellipse at 82% 55%, rgba(196, 240, 107, .11), transparent 32%),
+        linear-gradient(125deg, #1c2019, #191b18 60%, #20231d);
+    }
+    .clock-card::after {
+      position: absolute;
+      top: 0;
+      right: 34px;
+      width: 1px;
+      height: 100%;
+      background: linear-gradient(transparent, #c4f06b22, transparent);
+      content: "";
+    }
+    .card-label { display: flex; align-items: center; gap: 8px; color: #b8bdb0; font-size: 11px; letter-spacing: .5px; }
+    .card-label .pin { color: var(--accent); font-size: 14px; }
+    .clock-time {
+      margin: 26px 0 8px;
+      font-family: Manrope, sans-serif;
+      font-size: clamp(52px, 7vw, 78px);
+      font-weight: 500;
+      letter-spacing: -5px;
+      line-height: .95;
+      font-variant-numeric: tabular-nums;
+    }
+    .clock-time .colon { color: var(--accent); animation: blink 1.2s steps(2, start) infinite; }
+    @keyframes blink { to { visibility: hidden; } }
+    .clock-date { color: #a4a99e; font-size: 13px; text-transform: capitalize; }
+    .timezone { position: absolute; right: 25px; bottom: 23px; color: #8e9486; font-size: 10px; letter-spacing: .8px; }
+
+    .weather-card { min-height: 220px; padding: 22px; background: linear-gradient(145deg, #20231e, #191b18 72%); }
+    .weather-top { display: flex; align-items: center; justify-content: space-between; }
+    .weather-icon { color: var(--accent); }
+    .weather-icon svg { width: 35px; height: 35px; }
+    .weather-main { display: flex; align-items: flex-start; gap: 10px; margin: 21px 0 2px; }
+    .weather-temp { font-family: Manrope, sans-serif; font-size: 54px; font-weight: 500; letter-spacing: -3px; line-height: 1; }
+    .weather-unit { padding-top: 5px; color: #acb1a5; font-size: 18px; }
+    .weather-description { color: #d3d5cd; font-size: 13px; }
+    .weather-details { display: flex; gap: 18px; margin-top: 20px; padding-top: 13px; border-top: 1px solid var(--line); color: #a2a79c; font-size: 10px; }
+    .weather-details strong { margin-left: 4px; color: #e1e3dc; font-size: 11px; font-weight: 600; }
+    .weather-status { color: var(--muted); font-size: 11px; }
+
+    .news-panel { padding: 21px 22px 10px; }
+    .news-heading { margin-bottom: 9px; }
+    .news-source { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); font-size: 10px; text-decoration: none; }
+    .news-source:hover { color: var(--accent); }
+    .news-list { display: grid; }
+    .news-item { display: grid; grid-template-columns: 30px 1fr; gap: 12px; padding: 15px 0; border-top: 1px solid var(--line); }
+    .news-number { padding-top: 1px; color: #68705d; font-family: Manrope, sans-serif; font-size: 12px; font-weight: 700; }
+    .news-item a { color: #e2e4dd; font-size: 12px; font-weight: 500; line-height: 1.55; text-decoration: none; }
+    .news-item a:hover { color: var(--accent); }
+    .news-meta { display: flex; gap: 8px; margin-top: 7px; color: var(--muted); font-size: 10px; }
+    .news-tag { color: var(--accent); }
+    .empty-news { padding: 20px 0; color: var(--muted); font-size: 12px; line-height: 1.6; }
+
+    .tasks-panel { padding: 21px 22px 16px; }
+    .task-count { display: grid; min-width: 25px; height: 25px; padding: 0 7px; place-items: center; border-radius: 8px; background: var(--accent-dim); color: var(--accent); font-size: 11px; font-weight: 700; }
+    .task-form { display: flex; gap: 8px; margin: 18px 0 11px; }
+    .task-input {
+      width: 100%;
+      min-width: 0;
+      padding: 11px 12px;
+      border: 1px solid #30332d;
+      border-radius: 11px;
+      outline: none;
+      background: #121411;
+      color: var(--text);
+      font-size: 11px;
+    }
+    .task-input::placeholder { color: #6f746a; }
+    .task-input:focus { border-color: #697d45; }
+    .add-button {
+      display: grid;
+      width: 39px;
+      flex: 0 0 auto;
+      place-items: center;
+      border: 0;
+      border-radius: 11px;
+      background: var(--accent);
+      color: #1b2112;
+      cursor: pointer;
+      transition: transform .15s, background .15s;
+    }
+    .add-button:hover { transform: translateY(-1px); background: #d4ff7c; }
+    .add-button svg { width: 18px; height: 18px; }
+    .task-list { display: grid; }
+    .task-row { display: flex; align-items: center; gap: 10px; min-height: 42px; border-top: 1px solid #282b26; }
+    .task-check {
+      display: grid;
+      width: 17px;
+      height: 17px;
+      flex: 0 0 auto;
+      place-items: center;
+      border: 1px solid #50564a;
+      border-radius: 6px;
+      background: transparent;
+      color: #182010;
+      cursor: pointer;
+    }
+    .task-check svg { width: 11px; height: 11px; opacity: 0; }
+    .task-row.done .task-check { border-color: var(--accent); background: var(--accent); }
+    .task-row.done .task-check svg { opacity: 1; }
+    .task-text { overflow: hidden; flex: 1; color: #d4d7cf; font-size: 11px; text-overflow: ellipsis; white-space: nowrap; }
+    .task-row.done .task-text { color: #777d72; text-decoration: line-through; }
+    .task-delete { display: grid; width: 28px; height: 28px; flex: 0 0 auto; place-items: center; border: 0; border-radius: 8px; background: transparent; color: #74796f; cursor: pointer; opacity: 0; transition: background .15s, color .15s, opacity .15s; }
+    .task-row:hover .task-delete, .task-delete:focus-visible { opacity: 1; }
+    .task-delete:hover { background: #33231f; color: #e69578; }
+    .task-delete svg { width: 14px; height: 14px; }
+    .task-empty { padding: 15px 0 4px; color: var(--muted); font-size: 11px; }
+
+    .calendar-panel { padding: 21px 22px 17px; }
+    .calendar-controls { display: flex; align-items: center; gap: 6px; }
+    .month-label { min-width: 100px; color: #d8dad2; font-size: 11px; text-align: center; text-transform: capitalize; }
+    .month-button { display: grid; width: 25px; height: 25px; place-items: center; border: 1px solid #30332d; border-radius: 8px; background: #20231e; color: #aeb3a8; cursor: pointer; }
+    .month-button:hover { border-color: #586343; color: var(--accent); }
+    .month-button svg { width: 13px; height: 13px; }
+    .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-top: 19px; text-align: center; }
+    .weekday { padding-bottom: 5px; color: #747a70; font-size: 9px; font-weight: 600; }
+    .day {
+      display: grid;
+      aspect-ratio: 1;
+      max-height: 33px;
+      place-items: center;
+      border: 1px solid transparent;
+      border-radius: 9px;
+      color: #c1c5bb;
+      font-size: 10px;
+      font-variant-numeric: tabular-nums;
+    }
+    .day.muted { color: #555b52; }
+    .day.today { border-color: #51623a; background: var(--accent-dim); color: var(--accent); font-weight: 700; }
+    .calendar-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 15px; padding-top: 12px; border-top: 1px solid var(--line); color: var(--muted); font-size: 10px; }
+    .calendar-footer strong { color: #daddd4; font-weight: 500; }
+    .today-link { padding: 0; border: 0; background: transparent; color: var(--accent); font-size: 10px; cursor: pointer; }
+    .today-link:hover { color: #e0ffab; }
+
+    .footer { display: flex; justify-content: space-between; margin-top: 24px; color: #656b61; font-size: 10px; }
+    .footer span:last-child { color: #777d72; }
+
+    @media (max-width: 960px) {
+      .shell { padding: 28px 28px 38px; }
+      .dashboard-grid { grid-template-columns: minmax(0, 1fr) minmax(290px, .78fr); }
+      .hero-row { grid-template-columns: 1fr; }
+      .clock-card, .weather-card { min-height: 205px; }
+      .weather-card { display: grid; grid-template-columns: 1fr 1fr; align-items: center; }
+      .weather-card .panel-heading { grid-column: 1 / -1; }
+      .weather-main { margin: 17px 0 2px; }
+      .weather-details { display: grid; justify-content: end; gap: 8px; margin: 0; padding: 0; border: 0; }
+    }
+    @media (max-width: 700px) {
+      .shell { padding: 22px 17px 30px; }
+      .topbar { margin-bottom: 33px; }
+      .live-badge { padding: 8px 10px; }
+      .live-badge span:last-child { display: none; }
+      .welcome { margin-bottom: 20px; }
+      .dashboard-grid { grid-template-columns: 1fr; }
+      .left-column, .right-column { gap: 15px; }
+      .hero-row { grid-template-columns: 1fr; gap: 15px; }
+      .clock-card { min-height: 205px; padding: 23px; }
+      .weather-card { min-height: 185px; padding: 20px; }
+      .clock-time { margin-top: 29px; font-size: 68px; }
+      .right-column { grid-template-columns: 1fr; }
+      .task-delete { opacity: 1; }
+      .footer { gap: 12px; font-size: 9px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; }
+    }
+
+    :root {
+      --bg: #090b10;
+      --panel: rgba(25, 28, 36, .55);
+      --panel-soft: rgba(38, 42, 53, .58);
+      --line: rgba(255, 255, 255, .11);
+      --text: #f5f6fa;
+      --muted: #9a9eaa;
+      --accent: #a9c8ff;
+      --accent-dim: rgba(112, 149, 216, .16);
+      --orange: #e6a56c;
+      --radius: 25px;
+    }
+
+    body {
+      background:
+        radial-gradient(ellipse at 9% 9%, rgba(87, 124, 191, .2), transparent 34%),
+        radial-gradient(ellipse at 88% 26%, rgba(132, 101, 182, .14), transparent 31%),
+        radial-gradient(ellipse at 50% 100%, rgba(60, 91, 150, .12), transparent 45%),
+        var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", sans-serif;
+    }
+    .shell { max-width: 1380px; }
+    .brand-name, h1, .panel-title, .clock-time, .weather-temp, .news-number, .month-label {
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", sans-serif;
+    }
+    .brand-name { font-weight: 650; letter-spacing: -.4px; }
+    h1 { font-weight: 550; letter-spacing: -1.35px; }
+    .panel {
+      position: relative;
+      border-color: rgba(255, 255, 255, .12);
+      background: linear-gradient(145deg, rgba(255, 255, 255, .085), rgba(255, 255, 255, .025) 55%, rgba(160, 177, 211, .045));
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, .12), 0 16px 42px rgba(0, 0, 0, .14);
+      -webkit-backdrop-filter: blur(26px) saturate(155%);
+      backdrop-filter: blur(26px) saturate(155%);
+    }
+    .panel::before {
+      position: absolute;
+      z-index: 0;
+      top: 0;
+      left: 8%;
+      width: 46%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .38), transparent);
+      content: "";
+      pointer-events: none;
+    }
+    .panel > * { position: relative; z-index: 1; }
+    .clock-card {
+      border-color: rgba(255, 255, 255, .16);
+      background:
+        radial-gradient(ellipse at 82% 55%, rgba(125, 163, 232, .19), transparent 37%),
+        linear-gradient(135deg, rgba(45, 54, 72, .62), rgba(24, 27, 35, .58) 62%, rgba(54, 49, 74, .36));
+    }
+    .clock-card::after { opacity: 0; }
+    .clock-card > .timezone { position: absolute; right: 25px; bottom: 23px; z-index: 1; }
+    .weather-card {
+      background:
+        radial-gradient(ellipse at 100% 0%, rgba(116, 154, 224, .13), transparent 45%),
+        linear-gradient(145deg, rgba(42, 48, 62, .62), rgba(24, 27, 35, .57) 72%);
+    }
+    .brand-mark, .icon-box, .month-button {
+      border-color: rgba(255, 255, 255, .13);
+      background: linear-gradient(145deg, rgba(255, 255, 255, .12), rgba(255, 255, 255, .045));
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, .12);
+      -webkit-backdrop-filter: blur(16px);
+      backdrop-filter: blur(16px);
+    }
+    .brand-mark { color: var(--accent); }
+    .icon-box, .weather-icon { color: var(--accent); }
+    .live-badge {
+      border-color: rgba(255, 255, 255, .14);
+      background: rgba(255, 255, 255, .055);
+      -webkit-backdrop-filter: blur(18px);
+      backdrop-filter: blur(18px);
+    }
+    .live-dot { background: #8de5b1; box-shadow: 0 0 12px rgba(141, 229, 177, .7); }
+    .avatar {
+      border-color: rgba(255, 255, 255, .16);
+      background: linear-gradient(145deg, rgba(255, 255, 255, .15), rgba(255, 255, 255, .055));
+    }
+    .eyebrow, .news-tag, .today-link { color: var(--accent); }
+    .clock-time .colon { color: var(--accent); }
+    .task-count { border: 1px solid rgba(169, 200, 255, .18); background: var(--accent-dim); color: var(--accent); }
+    .task-input {
+      border-color: rgba(255, 255, 255, .12);
+      background: rgba(7, 9, 14, .38);
+      -webkit-backdrop-filter: blur(12px);
+      backdrop-filter: blur(12px);
+    }
+    .task-input:focus { border-color: rgba(169, 200, 255, .55); }
+    .add-button {
+      border: 1px solid rgba(255, 255, 255, .35);
+      background: linear-gradient(145deg, #d6e5ff, #9bbdf5);
+      box-shadow: 0 4px 16px rgba(116, 157, 224, .26), inset 0 1px 0 rgba(255, 255, 255, .8);
+      color: #17233a;
+    }
+    .add-button:hover { background: linear-gradient(145deg, #e6efff, #b2ceff); }
+    .task-row { border-color: rgba(255, 255, 255, .075); }
+    .task-check { border-color: rgba(255, 255, 255, .28); }
+    .task-row.done .task-check { border-color: var(--accent); background: var(--accent); }
+    .task-delete:hover { background: rgba(218, 112, 108, .15); }
+    .day.today {
+      border-color: rgba(169, 200, 255, .45);
+      background: linear-gradient(145deg, rgba(169, 200, 255, .28), rgba(118, 157, 223, .14));
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, .16);
+      color: #dce8ff;
+    }
+    .month-button:hover { border-color: rgba(169, 200, 255, .4); color: var(--accent); }
+    .calendar-footer, .news-item { border-color: rgba(255, 255, 255, .09); }
+    .news-item a:hover { color: var(--accent); }
+    .footer { color: #777e8d; }
+
+    @media (max-width: 700px) {
+      .shell { padding: 20px 16px 28px; }
+      .topbar { margin-bottom: 30px; }
+      .clock-card, .weather-card { border-radius: 24px; }
+      .clock-time { font-size: 66px; letter-spacing: -4px; }
+      .clock-card > .timezone { position: static; margin-top: 12px; text-align: right; }
+    }
+
+    :root {
+      color-scheme: dark;
+      --bg: #0b0b0d;
+      --panel: rgba(31, 31, 34, .68);
+      --panel-soft: rgba(255, 255, 255, .055);
+      --line: rgba(255, 255, 255, .105);
+      --text: #f5f5f7;
+      --muted: #98989f;
+      --accent: #dedee2;
+      --accent-dim: rgba(255, 255, 255, .075);
+      --orange: #b6b6bc;
+      --radius: 24px;
+    }
+
+    body {
+      background:
+        radial-gradient(ellipse at 50% -18%, rgba(255, 255, 255, .075), transparent 46%),
+        #0b0b0d;
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", system-ui, sans-serif;
+    }
+
+    .shell { max-width: 1320px; padding-top: 42px; }
+    .topbar { margin-bottom: 56px; }
+    .brand-mark, .icon-box, .month-button, .avatar, .live-badge, .task-count,
+    .task-input, .task-check, .add-button {
+      color: #d7d7dc;
+      border-color: rgba(255, 255, 255, .13);
+      background: rgba(255, 255, 255, .055);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, .075);
+      -webkit-backdrop-filter: blur(18px) saturate(115%);
+      backdrop-filter: blur(18px) saturate(115%);
+    }
+    .brand-mark { border-radius: 13px; }
+    .brand-mark svg { color: #e4e4e8; }
+    .brand-name { color: #f5f5f7; font-weight: 600; letter-spacing: -.25px; }
+    .brand-subtitle, .panel-kicker, .card-label, .timezone, .footer { color: #929298; }
+    .live-badge { color: #c4c4ca; }
+    .live-dot { background: #c8c8cd; box-shadow: none; }
+    .avatar { color: #e4e4e8; }
+    .welcome { margin-bottom: 30px; }
+    .eyebrow { color: #a7a7ae; font-size: 10px; letter-spacing: 1.4px; }
+    h1 { font-weight: 550; letter-spacing: -1.1px; }
+    h1 span { color: #88888f; }
+
+    .dashboard-grid { gap: 22px; }
+    .left-column, .right-column, .hero-row { gap: 22px; }
+    .panel {
+      border-color: rgba(255, 255, 255, .11);
+      border-radius: var(--radius);
+      background: linear-gradient(145deg, rgba(255, 255, 255, .075), rgba(255, 255, 255, .033) 58%, rgba(255, 255, 255, .045));
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, .09), 0 18px 48px rgba(0, 0, 0, .14);
+      -webkit-backdrop-filter: blur(28px) saturate(115%);
+      backdrop-filter: blur(28px) saturate(115%);
+    }
+    .panel::before { background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .2), transparent); }
+    .panel-title { color: #f1f1f4; font-weight: 600; }
+    .clock-card {
+      border-color: rgba(255, 255, 255, .14);
+      background: linear-gradient(135deg, rgba(255, 255, 255, .085), rgba(255, 255, 255, .035) 62%, rgba(255, 255, 255, .05));
+    }
+    .clock-card::after { display: none; }
+    .card-label .pin { color: #bdbdc3; }
+    .clock-time { color: #f6f6f8; font-weight: 450; letter-spacing: -4px; }
+    .clock-time .colon { color: #a5a5ac; animation: none; }
+    .clock-date { color: #b2b2b8; }
+    .timezone { color: #8c8c93; }
+    .weather-card {
+      background: linear-gradient(145deg, rgba(255, 255, 255, .075), rgba(255, 255, 255, .03) 72%);
+    }
+    .weather-icon { color: #d5d5da; }
+    .weather-temp { color: #f4f4f6; font-weight: 450; }
+    .weather-unit, .weather-details { color: #a4a4ab; }
+    .weather-details { border-color: rgba(255, 255, 255, .11); }
+    .weather-details strong { color: #e0e0e4; }
+    .news-source { color: #a8a8af; }
+    .news-source:hover, .news-item a:hover { color: #fff; }
+    .news-item { border-color: rgba(255, 255, 255, .09); }
+    .news-number, .news-tag { color: #a7a7ae; }
+    .news-item a { color: #e3e3e7; }
+    .tasks-panel, .calendar-panel { padding: 24px 24px 20px; }
+    .task-count { color: #e5e5e9; font-weight: 600; }
+    .task-form { gap: 10px; margin: 22px 0 14px; }
+    .task-input {
+      padding: 12px 14px;
+      color: #f1f1f4;
+      background: rgba(0, 0, 0, .2);
+      box-shadow: none;
+      font-size: 12px;
+    }
+    .task-input::placeholder { color: #85858c; }
+    .task-input:focus { border-color: rgba(255, 255, 255, .3); }
+    .add-button {
+      width: 42px;
+      border: 1px solid rgba(255, 255, 255, .15);
+      background: rgba(255, 255, 255, .12);
+      color: #f1f1f4;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, .12);
+    }
+    .add-button:hover { transform: translateY(-1px); background: rgba(255, 255, 255, .19); }
+    .task-row { min-height: 46px; border-color: rgba(255, 255, 255, .08); }
+    .task-check { border-color: rgba(255, 255, 255, .28); background: rgba(255, 255, 255, .035); }
+    .task-row.done .task-check { border-color: #bdbdc4; background: #bdbdc4; color: #161619; }
+    .task-row.done .task-text { color: #85858c; }
+    .task-delete:hover { background: rgba(255, 255, 255, .09); color: #fff; }
+    .calendar-controls { gap: 8px; }
+    .month-button { color: #d6d6db; }
+    .month-button:hover { border-color: rgba(255, 255, 255, .25); color: #fff; }
+    .month-label { color: #e0e0e4; }
+    .calendar-grid { gap: 6px; margin-top: 22px; }
+    .weekday { color: #85858c; }
+    .day { color: #d1d1d6; }
+    .day.muted { color: #63636a; }
+    .day.today {
+      border-color: rgba(255, 255, 255, .3);
+      background: rgba(255, 255, 255, .14);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, .12);
+      color: #fff;
+    }
+    .calendar-footer { margin-top: 18px; border-color: rgba(255, 255, 255, .09); color: #9999a0; }
+    .calendar-footer strong { color: #e3e3e7; }
+    .today-link { color: #c5c5cb; }
+    .today-link:hover { color: #fff; }
+    .footer { margin-top: 30px; color: #76767e; }
+
+    @media (max-width: 960px) {
+      .shell { padding-top: 30px; }
+      .topbar { margin-bottom: 42px; }
+      .dashboard-grid, .left-column, .right-column, .hero-row { gap: 18px; }
+    }
+    @media (max-width: 700px) {
+      .shell { padding: 22px 17px 32px; }
+      .topbar { margin-bottom: 38px; }
+      .welcome { margin-bottom: 24px; }
+      .dashboard-grid, .left-column, .right-column, .hero-row { gap: 16px; }
+      .clock-card { min-height: 205px; padding: 24px; }
+      .weather-card { min-height: 190px; padding: 22px; }
+      .tasks-panel, .calendar-panel { padding: 22px; }
+      .clock-card > .timezone { position: static; margin-top: 12px; text-align: right; }
+    }
+    .hero-row { display: block; }
+    .overview-card {
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) 1px minmax(230px, .85fr);
+      align-items: center;
+      gap: 28px;
+      min-height: 0;
+      padding: 25px 30px;
+    }
+    .overview-time, .overview-weather { min-width: 0; }
+    .overview-divider { width: 1px; align-self: stretch; background: rgba(255, 255, 255, .11); }
+    .overview-time .clock-time { margin: 15px 0 6px; font-size: clamp(52px, 6vw, 72px); }
+    .overview-time .clock-date { font-size: 12px; }
+    .overview-time .timezone { position: static; margin-top: 13px; font-size: 9px; }
+    .overview-weather .panel-heading { align-items: center; }
+    .overview-weather .weather-icon svg { width: 27px; height: 27px; }
+    .overview-weather-reading { display: flex; align-items: center; gap: 12px; margin-top: 13px; }
+    .overview-weather .weather-main { flex: 0 0 auto; gap: 5px; margin: 0; }
+    .overview-weather .weather-temp { font-size: 46px; }
+    .overview-weather .weather-unit { padding-top: 3px; font-size: 15px; }
+    .overview-weather .weather-description { min-width: 0; font-size: 12px; }
+    .overview-weather .weather-details {
+      gap: 16px;
+      margin-top: 13px;
+      padding-top: 11px;
+      border-top: 1px solid rgba(255, 255, 255, .1);
+      font-size: 9px;
+    }
+    .overview-weather .weather-details strong { font-size: 10px; }
+    @media (max-width: 700px) {
+      .overview-card { grid-template-columns: minmax(0, 1fr) 1px minmax(0, .9fr); gap: 13px; padding: 19px 16px; }
+      .overview-time .clock-time { margin: 16px 0 7px; font-size: clamp(39px, 12vw, 53px); letter-spacing: -3px; }
+      .overview-time .card-label { gap: 5px; font-size: 8px; letter-spacing: .2px; white-space: nowrap; }
+      .overview-time .clock-date { font-size: 10px; line-height: 1.4; }
+      .overview-time .timezone { margin-top: 9px; font-size: 7px; letter-spacing: .4px; white-space: nowrap; }
+      .overview-weather .panel-title { font-size: 13px; }
+      .overview-weather .panel-kicker { font-size: 9px; }
+      .overview-weather .weather-icon svg { width: 22px; height: 22px; }
+      .overview-weather-reading { display: block; margin-top: 10px; }
+      .overview-weather .weather-temp { font-size: 39px; }
+      .overview-weather .weather-unit { font-size: 13px; }
+      .overview-weather .weather-description { margin-top: 3px; font-size: 10px; }
+      .overview-weather .weather-details { display: grid; gap: 6px; margin-top: 9px; padding-top: 8px; }
+      .overview-weather .weather-details strong { margin-left: 3px; font-size: 9px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .clock-time .colon { animation: none; }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 19.5h18M5.5 19.5V9.8L12 5l6.5 4.8v9.7M9 19.5v-6h6v6M3.5 9.5 12 3l8.5 6.5"/></svg>
+        </div>
+        <div><div class="brand-name">Мой дашборд</div><div class="brand-subtitle">Личное пространство</div></div>
+      </div>
+      <div class="topbar-right">
+        <div class="live-badge"><span class="live-dot"></span><span>Бишкек · Кыргызстан</span></div>
+        <div class="avatar" aria-label="Личный профиль">ME</div>
+      </div>
+    </header>
+
+    <section class="welcome">
+      <div class="eyebrow">ВАШ ДЕНЬ В БИШКЕКЕ</div>
+      <h1>Хороший день начинается <span>с ясного плана.</span></h1>
+    </section>
+
+    <div class="dashboard-grid">
+      <section class="left-column" aria-label="Время, погода и новости">
+        <div class="hero-row">
+          <section class="panel overview-card" aria-label="Время и погода в Бишкеке">
+            <div class="overview-time">
+              <div class="card-label"><span class="pin">⌖</span> БИШКЕК, КЫРГЫЗСТАН</div>
+              <div class="clock-time" id="clock" aria-live="off">--<span class="colon">:</span>--</div>
+              <div class="clock-date" id="date">Загружаем дату…</div>
+              <div class="timezone">GMT +6 · ASIA/BISHKEK</div>
+            </div>
+            <div class="overview-divider" aria-hidden="true"></div>
+            <div class="overview-weather">
+            <div class="panel-heading">
+              <div><h2 class="panel-title">Погода</h2><div class="panel-kicker">Бишкек · сейчас</div></div>
+              <div class="weather-icon" id="weather-icon" aria-hidden="true"></div>
+            </div>
+            <div class="overview-weather-reading">
+              <div class="weather-main"><div class="weather-temp" id="weather-temp">--</div><div class="weather-unit">°C</div></div>
+              <div class="weather-description" id="weather-description"><span class="weather-status">Загружаем погоду…</span></div>
+            </div>
+            <div class="weather-details">
+              <div>ОЩУЩАЕТСЯ<strong id="weather-feels">—°</strong></div>
+              <div>ВЕТЕР<strong id="weather-wind">— км/ч</strong></div>
+            </div>
+            </div>
+          </section>
+        </div>
+
+        <section class="panel news-panel">
+          <div class="panel-heading news-heading">
+            <div><h2 class="panel-title">Строительство в Кыргызстане</h2><div class="panel-kicker">Последние новости отрасли</div></div>
+            <a class="news-source" href="https://news.google.com/search?q=%D1%81%D1%82%D1%80%D0%BE%D0%B8%D1%82%D0%B5%D0%BB%D1%8C%D1%81%D1%82%D0%B2%D0%BE%20%D0%9A%D1%8B%D1%80%D0%B3%D1%8B%D0%B7%D1%81%D1%82%D0%B0%D0%BD&hl=ru&gl=KG&ceid=KG%3Aru" target="_blank" rel="noopener noreferrer">Все новости ↗</a>
+          </div>
+          <div class="news-list" id="news-list" aria-live="polite">
+            <div class="empty-news">Загружаем новости…</div>
+          </div>
+        </section>
+      </section>
+
+      <aside class="right-column" aria-label="Планирование">
+        <section class="panel tasks-panel">
+          <div class="panel-heading">
+            <div><h2 class="panel-title">Мои задачи</h2><div class="panel-kicker">Маленькие шаги к большому</div></div>
+            <span class="task-count" id="task-count">0</span>
+          </div>
+          <form class="task-form" id="task-form">
+            <input class="task-input" id="task-input" type="text" maxlength="120" placeholder="Добавить новую задачу…" aria-label="Новая задача" autocomplete="off">
+            <button class="add-button" type="submit" aria-label="Добавить задачу">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+            </button>
+          </form>
+          <div class="task-list" id="task-list"></div>
+        </section>
+
+        <section class="panel calendar-panel">
+          <div class="panel-heading">
+            <div><h2 class="panel-title">Календарь</h2><div class="panel-kicker">Планируйте свой месяц</div></div>
+            <div class="calendar-controls">
+              <button class="month-button" id="prev-month" type="button" aria-label="Предыдущий месяц"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg></button>
+              <div class="month-label" id="month-label"></div>
+              <button class="month-button" id="next-month" type="button" aria-label="Следующий месяц"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg></button>
+            </div>
+          </div>
+          <div class="calendar-grid" id="calendar-grid" role="grid" aria-label="Календарь месяца"></div>
+          <div class="calendar-footer"><span>Сегодня · <strong id="calendar-today"></strong></span><button class="today-link" id="go-today" type="button">К текущему месяцу</button></div>
+        </section>
+      </aside>
+    </div>
+    <footer class="footer"><span>Ваш день — в одном месте.</span><span>Время указано для часового пояса Бишкека</span></footer>
+  </main>
+
+  <script>
+    const BISHKEK_TIME_ZONE = "Asia/Bishkek";
+    const weatherCodeLabels = {
+      0: "Ясно", 1: "Преимущественно ясно", 2: "Переменная облачность", 3: "Облачно",
+      45: "Туман", 48: "Изморозь", 51: "Лёгкая морось", 53: "Морось", 55: "Сильная морось",
+      56: "Ледяная морось", 57: "Сильная ледяная морось", 61: "Небольшой дождь", 63: "Дождь",
+      65: "Сильный дождь", 66: "Ледяной дождь", 67: "Сильный ледяной дождь",
+      71: "Небольшой снег", 73: "Снег", 75: "Сильный снег", 77: "Снежная крупа",
+      80: "Ливень", 81: "Сильный ливень", 82: "Очень сильный ливень",
+      85: "Снегопад", 86: "Сильный снегопад", 95: "Гроза", 96: "Гроза с градом", 99: "Сильная гроза с градом"
+    };
+    const icons = {
+      sun: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/></svg>',
+      cloud: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 16.2A4.8 4.8 0 0 0 17 7h-1.1A7 7 0 1 0 5 17h13a4 4 0 0 0 2-0.8Z"/></svg>',
+      rain: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.2A4.8 4.8 0 0 0 17 5h-1.1A7 7 0 1 0 5 15h13a4 4 0 0 0 2-.8Z"/><path d="m8 18-1 3m6-3-1 3m6-3-1 3"/></svg>',
+      snow: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13.2A4.8 4.8 0 0 0 17 4h-1.1A7 7 0 1 0 5 14h13a4 4 0 0 0 2-.8Z"/><path d="M8 18v3m-1.3-.7 2.6-1.6m0 1.6-2.6-1.6m8.3 2.3v-3m-1.3.7 2.6 1.6m0-1.6-2.6 1.6"/></svg>'
+    };
+    const pad = (value) => String(value).padStart(2, "0");
+    const bishkekNow = () => {
+      const parts = new Intl.DateTimeFormat("en-US", {
+        timeZone: BISHKEK_TIME_ZONE, year: "numeric", month: "numeric", day: "numeric"
+      }).formatToParts(new Date());
+      const value = Object.fromEntries(parts.map(({ type, value }) => [type, value]));
+      return new Date(Number(value.year), Number(value.month) - 1, Number(value.day));
+    };
+
+    function updateClock() {
+      const now = new Date();
+      const time = new Intl.DateTimeFormat("ru-RU", {
+        timeZone: BISHKEK_TIME_ZONE, hour: "2-digit", minute: "2-digit", hour12: false
+      }).format(now);
+      document.getElementById("clock").innerHTML = `${time.slice(0, 2)}<span class="colon">:</span>${time.slice(-2)}`;
+      document.getElementById("date").textContent = new Intl.DateTimeFormat("ru-RU", {
+        timeZone: BISHKEK_TIME_ZONE, weekday: "long", day: "numeric", month: "long", year: "numeric"
+      }).format(now);
+      document.querySelector(".welcome .eyebrow").textContent = new Intl.DateTimeFormat("ru-RU", {
+        timeZone: BISHKEK_TIME_ZONE, weekday: "long", day: "numeric", month: "long"
+      }).format(now).toLocaleUpperCase("ru-RU");
+    }
+
+    async function loadWeather() {
+      const icon = document.getElementById("weather-icon");
+      try {
+        const response = await fetch("https://api.open-meteo.com/v1/forecast?latitude=42.8746&longitude=74.5698&current=temperature_2m,relative_humidity_2m,apparent_temperature,is_day,precipitation,weather_code,wind_speed_10m&timezone=Asia%2FBishkek");
+        if (!response.ok) throw new Error(`Weather request failed: ${response.status}`);
+        const { current } = await response.json();
+        if (!current) throw new Error("Weather response is missing current conditions");
+        const code = current.weather_code;
+        const iconName = code === 0 || code === 1 ? "sun" : code >= 71 && code <= 86 ? "snow" : code >= 51 && code <= 67 || code >= 80 && code <= 82 ? "rain" : "cloud";
+        document.getElementById("weather-temp").textContent = Math.round(current.temperature_2m);
+        document.getElementById("weather-description").textContent = weatherCodeLabels[code] || "Погода обновлена";
+        document.getElementById("weather-feels").textContent = `${Math.round(current.apparent_temperature)}°`;
+        document.getElementById("weather-wind").textContent = `${Math.round(current.wind_speed_10m)} км/ч`;
+        icon.innerHTML = icons[iconName];
+      } catch (error) {
+        console.error("Не удалось загрузить погоду:", error);
+        document.getElementById("weather-description").textContent = "Не удалось загрузить погоду";
+        document.getElementById("weather-icon").innerHTML = icons.cloud;
+      }
+    }
+
+    function relativeDate(dateValue) {
+      const published = new Date(dateValue);
+      if (Number.isNaN(published.getTime())) return "Недавно";
+      const age = Math.max(0, Date.now() - published.getTime());
+      const hours = Math.floor(age / 3600000);
+      if (hours < 1) return "Недавно";
+      if (hours < 24) return `${hours} ч. назад`;
+      const days = Math.floor(hours / 24);
+      return days < 7 ? `${days} дн. назад` : new Intl.DateTimeFormat("ru-RU", { day: "numeric", month: "short" }).format(published);
+    }
+
+    function renderNews(items) {
+      const list = document.getElementById("news-list");
+      list.replaceChildren();
+      if (!items.length) {
+        list.innerHTML = '<div class="empty-news">Не удалось загрузить свежие публикации. <a class="news-source" href="https://news.google.com/search?q=%D1%81%D1%82%D1%80%D0%BE%D0%B8%D1%82%D0%B5%D0%BB%D1%8C%D1%81%D1%82%D0%B2%D0%BE%20%D0%9A%D1%8B%D1%80%D0%B3%D1%8B%D0%B7%D1%81%D1%82%D0%B0%D0%BD&hl=ru&gl=KG&ceid=KG%3Aru" target="_blank" rel="noopener noreferrer">Открыть поиск новостей ↗</a></div>';
+        return;
+      }
+      items.forEach((item, index) => {
+        const article = document.createElement("article");
+        article.className = "news-item";
+        const number = document.createElement("div");
+        number.className = "news-number";
+        number.textContent = String(index + 1).padStart(2, "0");
+        const content = document.createElement("div");
+        const link = document.createElement("a");
+        link.href = item.link;
+        link.target = "_blank";
+        link.rel = "noopener noreferrer";
+        link.textContent = item.title;
+        const meta = document.createElement("div");
+        meta.className = "news-meta";
+        const source = document.createElement("span");
+        source.className = "news-tag";
+        source.textContent = item.source || "Новости Кыргызстана";
+        const date = document.createElement("span");
+        date.textContent = relativeDate(item.pubDate);
+        meta.append(source, date);
+        content.append(link, meta);
+        article.append(number, content);
+        list.append(article);
+      });
+    }
+
+    async function loadNews() {
+      const feedUrl = "https://news.google.com/rss/search?q=%D1%81%D1%82%D1%80%D0%BE%D0%B8%D1%82%D0%B5%D0%BB%D1%8C%D1%81%D1%82%D0%B2%D0%BE+%D0%9A%D1%8B%D1%80%D0%B3%D1%8B%D0%B7%D1%81%D1%82%D0%B0%D0%BD+OR+%D0%91%D0%B8%D1%88%D0%BA%D0%B5%D0%BA&hl=ru&gl=KG&ceid=KG%3Aru";
+      try {
+        const response = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feedUrl)}&count=5`);
+        if (!response.ok) throw new Error(`News request failed: ${response.status}`);
+        const feed = await response.json();
+        if (feed.status !== "ok") throw new Error(feed.message || "News feed is unavailable");
+        const items = (feed.items || []).slice(0, 5).map((item) => ({
+          title: item.title?.trim() || "Новость без заголовка",
+          link: item.link || "https://news.google.com/",
+          pubDate: item.pubDate,
+          source: item.author?.trim() || "Новости Кыргызстана"
+        }));
+        renderNews(items);
+      } catch (error) {
+        console.error("Не удалось загрузить новости:", error);
+        renderNews([]);
+      }
+    }
+
+    const storageKey = "bishkek-dashboard-tasks";
+    let tasks = [];
+    try {
+      const savedTasks = localStorage.getItem(storageKey);
+      tasks = savedTasks ? JSON.parse(savedTasks) : [];
+      if (!Array.isArray(tasks)) tasks = [];
+    } catch (error) {
+      console.error("Не удалось прочитать сохранённые задачи:", error);
+      tasks = [];
+    }
+
+    function saveTasks() {
+      try {
+        localStorage.setItem(storageKey, JSON.stringify(tasks));
+      } catch (error) {
+        console.error("Не удалось сохранить задачи:", error);
+      }
+    }
+
+    function renderTasks() {
+      const list = document.getElementById("task-list");
+      list.replaceChildren();
+      document.getElementById("task-count").textContent = tasks.filter((task) => !task.done).length;
+      if (!tasks.length) {
+        const empty = document.createElement("div");
+        empty.className = "task-empty";
+        empty.textContent = "Пока нет задач — добавьте первую.";
+        list.append(empty);
+        return;
+      }
+      tasks.forEach((task) => {
+        const row = document.createElement("div");
+        row.className = `task-row${task.done ? " done" : ""}`;
+        const check = document.createElement("button");
+        check.className = "task-check";
+        check.type = "button";
+        check.setAttribute("aria-label", task.done ? "Отметить задачу невыполненной" : "Отметить задачу выполненной");
+        check.innerHTML = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m3 8 3.2 3.2L13 4.8"/></svg>';
+        check.addEventListener("click", () => {
+          task.done = !task.done;
+          saveTasks();
+          renderTasks();
+        });
+        const text = document.createElement("span");
+        text.className = "task-text";
+        text.textContent = task.text;
+        const remove = document.createElement("button");
+        remove.className = "task-delete";
+        remove.type = "button";
+        remove.setAttribute("aria-label", `Удалить задачу: ${task.text}`);
+        remove.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18m-2 0-.9 14H5.9L5 6m4 0V4h6v2m-5 4v6m4-6v6"/></svg>';
+        remove.addEventListener("click", () => {
+          tasks = tasks.filter((item) => item.id !== task.id);
+          saveTasks();
+          renderTasks();
+        });
+        row.append(check, text, remove);
+        list.append(row);
+      });
+    }
+
+    document.getElementById("task-form").addEventListener("submit", (event) => {
+      event.preventDefault();
+      const input = document.getElementById("task-input");
+      const text = input.value.trim();
+      if (!text) {
+        input.focus();
+        return;
+      }
+      tasks.unshift({ id: `${Date.now()}-${Math.random().toString(16).slice(2)}`, text, done: false });
+      saveTasks();
+      renderTasks();
+      input.value = "";
+      input.focus();
+    });
+
+    const today = bishkekNow();
+    let calendarMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+    const monthFormatter = new Intl.DateTimeFormat("ru-RU", { month: "long", year: "numeric" });
+    function renderCalendar() {
+      const grid = document.getElementById("calendar-grid");
+      grid.replaceChildren();
+      document.getElementById("month-label").textContent = monthFormatter.format(calendarMonth);
+      document.getElementById("calendar-today").textContent = new Intl.DateTimeFormat("ru-RU", { day: "numeric", month: "long" }).format(today);
+      ["ПН", "ВТ", "СР", "ЧТ", "ПТ", "СБ", "ВС"].forEach((name) => {
+        const dayName = document.createElement("div");
+        dayName.className = "weekday";
+        dayName.setAttribute("role", "columnheader");
+        dayName.textContent = name;
+        grid.append(dayName);
+      });
+      const year = calendarMonth.getFullYear();
+      const month = calendarMonth.getMonth();
+      const firstOffset = (new Date(year, month, 1).getDay() + 6) % 7;
+      const currentMonthDays = new Date(year, month + 1, 0).getDate();
+      const previousMonthDays = new Date(year, month, 0).getDate();
+      const cellCount = Math.ceil((firstOffset + currentMonthDays) / 7) * 7;
+      for (let index = 0; index < cellCount; index += 1) {
+        const day = document.createElement("div");
+        day.className = "day";
+        day.setAttribute("role", "gridcell");
+        let dayNumber;
+        if (index < firstOffset) {
+          dayNumber = previousMonthDays - firstOffset + index + 1;
+          day.classList.add("muted");
+        } else if (index >= firstOffset + currentMonthDays) {
+          dayNumber = index - firstOffset - currentMonthDays + 1;
+          day.classList.add("muted");
+        } else {
+          dayNumber = index - firstOffset + 1;
+          if (year === today.getFullYear() && month === today.getMonth() && dayNumber === today.getDate()) {
+            day.classList.add("today");
+            day.setAttribute("aria-current", "date");
+          }
+        }
+        day.textContent = dayNumber;
+        grid.append(day);
+      }
+    }
+    document.getElementById("prev-month").addEventListener("click", () => {
+      calendarMonth = new Date(calendarMonth.getFullYear(), calendarMonth.getMonth() - 1, 1);
+      renderCalendar();
+    });
+    document.getElementById("next-month").addEventListener("click", () => {
+      calendarMonth = new Date(calendarMonth.getFullYear(), calendarMonth.getMonth() + 1, 1);
+      renderCalendar();
+    });
+    document.getElementById("go-today").addEventListener("click", () => {
+      calendarMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+      renderCalendar();
+    });
+
+    updateClock();
+    window.setInterval(updateClock, 1000);
+    renderTasks();
+    renderCalendar();
+    loadWeather();
+    loadNews();
+  </script>
+</body>
+</html>
